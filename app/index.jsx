@@ -5,6 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import { Redirect, router } from 'expo-router';
 import { NativeWindStyleSheet } from "nativewind"; 
 import CustomButton from '../components/CustomButton';
+import { useGlobalContext } from '../context/GlobalProvider';
 
 
 NativeWindStyleSheet.setOutput({
@@ -14,6 +15,10 @@ NativeWindStyleSheet.setOutput({
 
 
 export default function App() {
+  const { isLoading, isLoggedIn } = useGlobalContext();
+
+  if(!isLoading && isLoggedIn) return <Redirect href="/home" />
+
   return (
    <SafeAreaView className="bg-primary h-full justify-center items-center px-4">
     <ScrollView contentContainerStyle={{ height: '100%' }}>
