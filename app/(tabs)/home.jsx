@@ -26,9 +26,7 @@ const Home = () => {
                 <Text>Welcome Back</Text>
                 <Text>JSMastery</Text>
               </View>
-
             </View>
-
           </View>
         )}
       />
