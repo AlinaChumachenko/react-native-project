@@ -11,9 +11,6 @@ import { useGlobalContext } from '../context/GlobalProvider';
 NativeWindStyleSheet.setOutput({
   default: "native",
 });
-
-
-
 export default function App() {
   const { isLoading, isLoggedIn } = useGlobalContext();
 
