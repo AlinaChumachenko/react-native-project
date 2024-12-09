@@ -1,14 +1,16 @@
 import { useEffect } from 'react';
-import { SplashScreen, Stack } from 'expo-router';
 import { useFonts } from 'expo-font';
-import { NativeWindStyleSheet } from 'nativewind';
+import 'react-native-url-polyfill/auto';
+import { SplashScreen, Stack } from 'expo-router';
 
 import GlobalProvider from '../context/GlobalProvider';
+import { NativeWindStyleSheet } from 'nativewind';
 
 NativeWindStyleSheet.setOutput({
   default: 'native',
 });
 
+// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 const RootLayout = () => {

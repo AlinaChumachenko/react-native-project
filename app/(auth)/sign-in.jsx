@@ -26,7 +26,6 @@ const SignIn = () => {
   const submit = async () => {
     if (form.email === '' || form.password === '') {
       Alert.alert('Error', 'Please fill in all fields');
-      return;
     }
 
     setSubmitting(true);
@@ -95,7 +94,7 @@ const SignIn = () => {
               href='/sign-up'
               className='text-lg font-psemibold text-secondary'
             >
-              Sign up
+              Signup
             </Link>
           </View>
         </View>

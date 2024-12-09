@@ -1,15 +1,12 @@
-import { View, Text, FlatList, Image, RefreshControl } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { NativeWindStyleSheet } from 'nativewind';
+import { FlatList, Image, RefreshControl, Text, View } from 'react-native';
 
 import { images } from '../../constants';
-import Searchinput from '../../components/SearchInput';
-import Trending from '../../components/Trending';
-import EmptyState from '../../components/EmptyState';
-import { getAllPosts, getLatestPosts } from '../../lib/appwrite';
 import useAppwrite from '../../lib/useAppwrite';
-import VideoCard from '../../components/VideoCard';
+import { getAllPosts, getLatestPosts } from '../../lib/appwrite';
+import { EmptyState, SearchInput, Trending, VideoCard } from '../../components';
+import { NativeWindStyleSheet } from 'nativewind';
 
 NativeWindStyleSheet.setOutput({
   default: 'native',
@@ -18,16 +15,8 @@ NativeWindStyleSheet.setOutput({
 const Home = () => {
   const { data: posts, refetch } = useAppwrite(getAllPosts);
   const { data: latestPosts } = useAppwrite(getLatestPosts);
-  console.log('latestPosts: ', latestPosts);
 
   const [refreshing, setRefreshing] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    if (latestPosts) {
-      setIsLoading(false);
-    }
-  }, [latestPosts]);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -35,17 +24,29 @@ const Home = () => {
     setRefreshing(false);
   };
 
+  // one flatlist
+  // with list header
+  // and horizontal flatlist
+
+  //  we cannot do that with just scrollview as there's both horizontal and vertical scroll (two flat lists, within trending)
+
   return (
-    <SafeAreaView className='bg-primary h-full'>
+    <SafeAreaView className='bg-primary'>
       <FlatList
         data={posts}
-        keyExtractor={(item, index) =>
-          item.id ? item.id.toString() : index.toString()
-        }
-        renderItem={({ item }) => <VideoCard video={item} />}
+        keyExtractor={(item) => item.$id}
+        renderItem={({ item }) => (
+          <VideoCard
+            title={item.title}
+            thumbnail={item.thumbnail}
+            video={item.video}
+            creator={item.creator.username}
+            avatar={item.creator.avatar}
+          />
+        )}
         ListHeaderComponent={() => (
-          <View className='my-6 px-4 space-y-6'>
-            <View className='justify-between items-start flex-row mb-6'>
+          <View className='flex my-6 px-4 space-y-6'>
+            <View className='flex justify-between items-start flex-row mb-6'>
               <View>
                 <Text className='font-pmedium text-sm text-gray-100'>
                   Welcome Back
@@ -64,29 +65,21 @@ const Home = () => {
               </View>
             </View>
 
-            <Searchinput />
+            <SearchInput />
 
-            <View className='w-full fle-1 pt-5 pb-8'>
-              <Text className='text-gray-100 text-lg font-pregular mb-3'>
+            <View className='w-full flex-1 pt-5 pb-8'>
+              <Text className='text-lg font-pregular text-gray-100 mb-3'>
                 Latest Videos
               </Text>
 
-              {isLoading ? (
-                <Text className='text-[#ffffff] text-sm'>Loading...</Text> // Відображаємо "Loading..." під час завантаження
-              ) : latestPosts && latestPosts.length > 0 ? (
-                <Trending posts={latestPosts} />
-              ) : (
-                <Text className='text-gray-100 text-sm'>
-                  No videos available
-                </Text>
-              )}
+              <Trending posts={latestPosts ?? []} />
             </View>
           </View>
         )}
         ListEmptyComponent={() => (
           <EmptyState
-            title='No videos found'
-            subtitle='Be the first to upload a video'
+            title='No Videos Found'
+            subtitle='No videos created yet'
           />
         )}
         refreshControl={

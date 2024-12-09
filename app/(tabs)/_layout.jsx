@@ -1,7 +1,9 @@
-import { View, Text, Image } from 'react-native';
-import { Tabs, Redirect } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import { Redirect, Tabs } from 'expo-router';
+import { Image, Text, View } from 'react-native';
 
 import { icons } from '../../constants';
+import { Loader } from '../../components';
 import { NativeWindStyleSheet } from 'nativewind';
 
 NativeWindStyleSheet.setOutput({
@@ -26,14 +28,18 @@ const TabIcon = ({ icon, color, name, focused }) => {
   );
 };
 
-const TabsLayout = () => {
+const TabLayout = () => {
+  const { loading, isLogged } = useGlobalContext();
+
+  if (!loading && !isLogged) return <Redirect href='/sign-in' />;
+
   return (
     <>
       <Tabs
         screenOptions={{
-          tabBarShowLabel: false,
           tabBarActiveTintColor: '#FFA001',
           tabBarInactiveTintColor: '#CDCDE0',
+          tabBarShowLabel: false,
           tabBarStyle: {
             backgroundColor: '#161622',
             borderTopWidth: 1,
@@ -104,8 +110,11 @@ const TabsLayout = () => {
           }}
         />
       </Tabs>
+
+      <Loader isLoading={loading} />
+      <StatusBar backgroundColor='#161622' style='light' />
     </>
   );
 };
 
-export default TabsLayout;
+export default TabLayout;

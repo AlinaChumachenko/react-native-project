@@ -1,17 +1,26 @@
-import { useCallback, useState } from 'react';
-import { Image, ImageBackground, TouchableOpacity } from 'react-native';
-import { View, Text, FlatList } from 'react-native';
+import { useState } from 'react';
+import { ResizeMode, Video } from 'expo-av';
 import * as Animatable from 'react-native-animatable';
-import { icons } from '../constants';
+import {
+  FlatList,
+  Image,
+  ImageBackground,
+  TouchableOpacity,
+} from 'react-native';
 
-import { Video, ResizeMode } from 'expo-av';
+import { icons } from '../constants';
+import { NativeWindStyleSheet } from 'nativewind';
+
+NativeWindStyleSheet.setOutput({
+  default: 'native',
+});
 
 const zoomIn = {
   0: {
     scale: 0.9,
   },
   1: {
-    scale: 1.1,
+    scale: 1,
   },
 };
 
@@ -26,11 +35,9 @@ const zoomOut = {
 
 const TrendingItem = ({ activeItem, item }) => {
   const [play, setPlay] = useState(false);
-  console.log('Rendering TrendingItem with item:', item);
 
   return (
     <Animatable.View
-      key={item.$id} // Додайте key для унікальності
       className='mr-5'
       animation={activeItem === item.$id ? zoomIn : zoomOut}
       duration={500}
@@ -38,7 +45,7 @@ const TrendingItem = ({ activeItem, item }) => {
       {play ? (
         <Video
           source={{ uri: item.video }}
-          className='w-52 h-72 rounded-[35xp] mt-3 bg-white/10'
+          className='w-52 h-72 rounded-[33px] mt-3 bg-white/10'
           resizeMode={ResizeMode.CONTAIN}
           useNativeControls
           shouldPlay
@@ -50,13 +57,15 @@ const TrendingItem = ({ activeItem, item }) => {
         />
       ) : (
         <TouchableOpacity
-          className='relativ justify-center items-center'
+          className='relative flex justify-center items-center'
           activeOpacity={0.7}
           onPress={() => setPlay(true)}
         >
           <ImageBackground
-            source={{ uri: item.thumbnail }}
-            className='w-52 h-72 rounded-[35xp] my-5 overflow hidden shadow-lg shadow-black/40'
+            source={{
+              uri: item.thumbnail,
+            }}
+            className='w-52 h-72 rounded-[33px] my-5 overflow-hidden shadow-lg shadow-black/40'
             resizeMode='cover'
           />
 
@@ -72,30 +81,27 @@ const TrendingItem = ({ activeItem, item }) => {
 };
 
 const Trending = ({ posts }) => {
-  const [activeItem, setActiveItem] = useState(posts[1]);
-  console.log('Rendering Trending with posts:', posts);
+  const [activeItem, setActiveItem] = useState(posts[0]);
 
-  if (!posts || posts.length === 0) {
-    return null; // Не відображати компонент, якщо немає даних
-  }
-
-  const viewableItemsChanged = useCallback(({ viewableItems }) => {
+  const viewableItemsChanged = ({ viewableItems }) => {
     if (viewableItems.length > 0) {
       setActiveItem(viewableItems[0].key);
     }
-  }, []);
+  };
 
   return (
     <FlatList
       data={posts}
-      keyExtractor={(item) => item.$id} // Переконайтесь, що у всіх елементів є унікальний $id
+      horizontal
+      keyExtractor={(item) => item.$id}
       renderItem={({ item }) => (
         <TrendingItem activeItem={activeItem} item={item} />
       )}
       onViewableItemsChanged={viewableItemsChanged}
-      viewabilityConfig={{ itemVisiblePercentThreshold: 70 }}
+      viewabilityConfig={{
+        itemVisiblePercentThreshold: 70,
+      }}
       contentOffset={{ x: 170 }}
-      horizontal
     />
   );
 };

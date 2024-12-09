@@ -1,6 +1,7 @@
-import { View, Text } from 'react-native';
-import { Stack } from 'expo-router';
+import { Redirect, Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { Loader } from '../../components';
+import { useGlobalContext } from '../../context/GlobalProvider';
 import { NativeWindStyleSheet } from 'nativewind';
 
 NativeWindStyleSheet.setOutput({
@@ -8,6 +9,10 @@ NativeWindStyleSheet.setOutput({
 });
 
 const AuthLayout = () => {
+  const { loading, isLogged } = useGlobalContext();
+
+  if (!loading && isLogged) return <Redirect href='/home' />;
+
   return (
     <>
       <Stack>
@@ -17,7 +22,6 @@ const AuthLayout = () => {
             headerShown: false,
           }}
         />
-
         <Stack.Screen
           name='sign-up'
           options={{
@@ -25,6 +29,8 @@ const AuthLayout = () => {
           }}
         />
       </Stack>
+
+      <Loader isLoading={loading} />
       <StatusBar backgroundColor='#161622' style='light' />
     </>
   );

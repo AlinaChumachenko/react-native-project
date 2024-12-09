@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { ResizeMode, Video } from 'expo-av';
 import { View, Text, TouchableOpacity, Image } from 'react-native';
-import { NativeWindStyleSheet } from 'nativewind';
 
 import { icons } from '../constants';
+import { NativeWindStyleSheet } from 'nativewind';
 
 NativeWindStyleSheet.setOutput({
   default: 'native',
